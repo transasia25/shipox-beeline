@@ -8,8 +8,10 @@ import type { NextConfig } from "next";
  */
 
 const nextConfig: NextConfig = {
-  // Сборка с минимальным server.js — так образ Docker не тащит все node_modules.
-  output: "standalone",
+  // Сборка с минимальным server.js — для нашего Docker-образа, чтобы он не
+  // тащил все node_modules. На Vercel (там задана VERCEL=1) не нужна и мешает:
+  // Vercel собирает Next.js по-своему и ищет файлы трассировки в другом месте.
+  output: process.env.VERCEL ? undefined : "standalone",
   // Значок Next.js в углу экрана операторам не нужен. Ошибки сборки и
   // выполнения при разработке Next.js всё равно покажет.
   devIndicators: false,

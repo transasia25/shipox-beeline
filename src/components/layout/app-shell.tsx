@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -87,31 +88,43 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button variant="ghost" className="h-10 gap-2 px-2">
-                <span className="hidden text-right leading-tight sm:block">
-                  <span className="block text-sm">{user.name}</span>
-                  <span className="block text-[11px] text-muted-foreground">{ROLE_LABEL[user.role]}</span>
-                </span>
-                <CircleUserRound className="size-7 text-slate-500" />
-              </Button>
-            }
-          />
-          <DropdownMenuContent align="end" className="w-52">
-            <DropdownMenuLabel>{user.login}</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => setChangingPassword(true)}>
-              <KeyRound className="size-4" />
-              Сменить пароль
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => void signOut()}>
-              <LogOut className="size-4" />
-              Выйти
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-1">
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="ghost" className="h-10 gap-2 px-2">
+                  <span className="hidden text-right leading-tight sm:block">
+                    <span className="block text-sm">{user.name}</span>
+                    <span className="block text-[11px] text-muted-foreground">{ROLE_LABEL[user.role]}</span>
+                  </span>
+                  <CircleUserRound className="size-7 text-slate-500" />
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end" className="w-52">
+              {/* Подпись группы обязана стоять внутри группы: без неё Base UI
+                  падает при открытии меню, и меню не открывается вовсе. */}
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>{user.login}</DropdownMenuLabel>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setChangingPassword(true)}>
+                <KeyRound className="size-4" />
+                Сменить пароль
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => void signOut()}>
+                <LogOut className="size-4" />
+                Выйти
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {/* Выход — на виду, а не только в меню: колл-центр работает за общими
+              компьютерами, и оператор должен выйти одним нажатием. */}
+          <Button variant="ghost" size="sm" onClick={() => void signOut()} title="Выйти">
+            <LogOut className="size-4" />
+            <span className="hidden sm:inline">Выйти</span>
+          </Button>
+        </div>
       </header>
 
       <div className="flex">
